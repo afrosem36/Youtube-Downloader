@@ -2,11 +2,12 @@ import os
 import yt_dlp
 from flask import Flask, render_template, request, send_file, jsonify
 
-# Configures Flask to find index.html in the root folder instead of /templates
+# Configured to find index.html in the root folder (not /templates)
 app = Flask(__name__, template_folder='.')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DOWNLOAD_FOLDER = os.path.join(BASE_DIR, 'downloads')
+COOKIES_PATH = os.path.join(BASE_DIR, 'cookies.txt')
 
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
@@ -19,17 +20,15 @@ def index():
 def get_info():
     url = request.json.get('url')
     try:
-        # On Render, ffmpeg is installed via render-build.sh and is available globally
-        ydl_opts = {'quiet': True, 'no_warnings': True}
+        ydl_opts = {
+            'quiet': True, 
+            'no_warnings': True,
+            'cookiefile': COOKIES_PATH if os.path.exists(COOKIES_PATH) else None
+        }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             formats = info.get('formats', [])
-            
-            # Filter unique video-only or combined resolutions
-            resolutions = sorted(list(set(
-                f['height'] for f in formats 
-                if f.get('height') and f.get('vcodec') != 'none'
-            )), reverse=True)
+            resolutions = sorted(list(set(f['height'] for f in formats if f.get('height'))), reverse=True)
             
             return jsonify({
                 'title': info.get('title'),
@@ -49,6 +48,7 @@ def download():
         'format': f'bestvideo[height<={res}]+bestaudio/best',
         'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
         'merge_output_format': 'mp4',
+        'cookiefile': COOKIES_PATH if os.path.exists(COOKIES_PATH) else None
     }
 
     try:
