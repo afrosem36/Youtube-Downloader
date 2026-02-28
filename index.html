@@ -9,47 +9,48 @@
     
     <script src="https://pl28816171.effectivegatecpm.com/ae/bb/45/aebb4548ea36d292822e96b52b5dbc4f.js"></script>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-6">
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-6 font-sans">
 
     <div class="max-w-md w-full bg-slate-800 rounded-3xl shadow-2xl p-8 border border-slate-700">
-        <h1 class="text-2xl font-black text-center mb-6 text-red-500 uppercase italic tracking-widest">4K Engine</h1>
+        <h1 class="text-3xl font-black text-center mb-6 text-red-500 italic tracking-tighter">HD PRO DOWNLOADER</h1>
 
         <div id="step1" class="space-y-4">
-            <input type="text" id="videoUrl" placeholder="Paste YouTube Link..." 
-                class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-            <button onclick="fetchInfo()" id="fetchBtn" class="w-full py-4 bg-red-600 rounded-xl font-bold hover:bg-red-500 transition shadow-lg">
+            <input type="text" id="videoUrl" placeholder="Paste YouTube URL here..." 
+                class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-red-500 transition shadow-inner">
+            <button onclick="fetchInfo()" id="fetchBtn" class="w-full py-4 bg-red-600 rounded-xl font-bold hover:bg-red-500 transition transform active:scale-95 shadow-lg">
                 <span id="btnText">ANALYZE VIDEO</span>
             </button>
         </div>
 
-        <div id="step2" class="hidden mt-6 space-y-4 border-t border-slate-700 pt-6">
+        <div id="step2" class="hidden mt-8 border-t border-slate-700 pt-6 animate-in fade-in zoom-in duration-300">
             
-            <div id="container-e2d939f7ebf37a8b70ec44178e001fe8" class="my-4">
+            <div id="container-e2d939f7ebf37a8b70ec44178e001fe8" class="mb-4 overflow-hidden rounded-lg bg-slate-900/50 min-h-[50px] flex items-center justify-center border border-slate-700">
                 <script async="async" data-cfasync="false" src="https://pl28816183.effectivegatecpm.com/e2d939f7ebf37a8b70ec44178e001fe8/invoke.js"></script>
             </div>
 
-            <img id="thumb" class="rounded-xl w-full mb-2 shadow-lg border border-slate-600" src="">
-            <h3 id="videoTitle" class="font-bold text-xs line-clamp-1 mb-4 opacity-70"></h3>
+            <img id="thumb" class="rounded-2xl w-full mb-4 shadow-2xl border border-slate-600" src="">
+            <h3 id="videoTitle" class="font-bold text-sm mb-4 text-slate-300"></h3>
             
-            <form action="/download" method="POST" id="dlForm">
+            <form action="/download" method="POST" id="dlForm" onsubmit="handleFinalDownload()">
                 <input type="hidden" name="url" id="formUrl">
-                <select name="resolution" id="resSelect" class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl">
+                <select name="resolution" id="resSelect" class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl mb-4 focus:ring-2 focus:ring-green-500 outline-none">
                     </select>
-                <button type="button" onclick="handleDownload()" id="dlBtn" class="w-full mt-4 py-4 bg-green-600 rounded-xl font-bold hover:bg-green-500 transition">
-                    START 4K DOWNLOAD
+                <button type="submit" id="dlBtn" class="w-full py-4 bg-green-600 rounded-xl font-bold hover:bg-green-500 transition shadow-lg flex items-center justify-center">
+                    <i class="fa-solid fa-cloud-arrow-down mr-2"></i> DOWNLOAD NOW
                 </button>
             </form>
         </div>
 
-        <div id="loader" class="hidden mt-4 text-center">
-            <div class="inline-block w-6 h-6 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+        <div id="loader" class="hidden mt-6 text-center">
+            <div class="inline-block w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xs text-slate-500 mt-2 font-bold uppercase tracking-widest">Processing Quality Streams...</p>
         </div>
     </div>
 
     <script>
         async function fetchInfo() {
             const url = document.getElementById('videoUrl').value;
-            if (!url) return alert("Please paste a link!");
+            if (!url) return alert("Please paste a link first!");
 
             document.getElementById('fetchBtn').disabled = true;
             document.getElementById('loader').classList.remove('hidden');
@@ -64,7 +65,7 @@
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('fetchBtn').disabled = false;
 
-            if (data.error) return alert("Error: " + data.error);
+            if (data.error) return alert("System Busy or URL Error. Try again.");
 
             document.getElementById('step2').classList.remove('hidden');
             document.getElementById('thumb').src = data.thumbnail;
@@ -74,20 +75,15 @@
             const select = document.getElementById('resSelect');
             select.innerHTML = '';
             data.resolutions.forEach(res => {
-                const label = res >= 2160 ? '💎 4K Ultra HD' : res >= 1080 ? '✨ 1080p Full HD' : res + 'p';
-                select.innerHTML += `<option value="${res}">${label}</option>`;
+                const badge = res >= 2160 ? ' [4K ULTRA]' : res >= 1080 ? ' [1080p HD]' : '';
+                select.innerHTML += `<option value="${res}">${res}p${badge}</option>`;
             });
         }
 
-        function handleDownload() {
-            const res = document.getElementById('resSelect').value;
-            // The Social Bar script is already active, so just trigger the form
-            if (res >= 1080) {
-                alert("Premium Quality: Please support our sponsor to start your 4K download!");
-            }
-            document.getElementById('dlBtn').innerText = "DOWNLOADING...";
+        function handleFinalDownload() {
+            document.getElementById('dlBtn').innerText = "PREPARING FILE...";
             document.getElementById('dlBtn').disabled = true;
-            document.getElementById('dlForm').submit();
+            // The Social Bar script handles the ad pop-up automatically
         }
     </script>
 </body>
