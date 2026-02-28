@@ -3,116 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X-Downloader | Pro Monetized</title>
+    <title>X-Downloader 4K Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <script src="https://pl28816171.effectivegatecpm.com/ae/bb/45/aebb4548ea36d292822e96b52b5dbc4f.js"></script>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
-
-    <div class="w-full max-w-2xl bg-slate-800/50 p-2 mb-6 border border-slate-700 rounded text-center text-xs text-slate-500">
-        ADVERTISEMENT
-        <div class="h-20 flex items-center justify-center bg-slate-700 rounded mt-1 italic">
-            Banner Ad (728x90)
-        </div>
-    </div>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-6">
 
     <div class="max-w-md w-full bg-slate-800 rounded-3xl shadow-2xl p-8 border border-slate-700">
-        <h1 class="text-2xl font-black text-center mb-6 bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent uppercase italic">
-            4K Downloader Engine
-        </h1>
+        <h1 class="text-2xl font-black text-center mb-6 text-red-500 uppercase italic tracking-widest">4K Engine</h1>
 
-        <div id="inputSection" class="space-y-4">
-            <div class="relative">
-                <input type="text" id="videoUrl" placeholder="Paste Link..." 
-                    class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
-            </div>
-            <button onclick="processLink()" id="mainBtn" class="w-full py-4 bg-red-600 rounded-xl font-bold hover:bg-red-500 transition shadow-lg flex items-center justify-center">
+        <div id="step1" class="space-y-4">
+            <input type="text" id="videoUrl" placeholder="Paste YouTube Link..." 
+                class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+            <button onclick="fetchInfo()" id="fetchBtn" class="w-full py-4 bg-red-600 rounded-xl font-bold hover:bg-red-500 transition shadow-lg">
                 <span id="btnText">ANALYZE VIDEO</span>
-                <div id="spinner" class="hidden ml-3 w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             </button>
         </div>
 
-        <div id="resultSection" class="hidden mt-8 border-t border-slate-700 pt-6 animate-pulse">
-            <img id="thumb" class="rounded-xl w-full mb-4 shadow-xl border border-slate-600" src="">
-            <h3 id="title" class="text-sm font-bold mb-4 line-clamp-2"></h3>
+        <div id="step2" class="hidden mt-6 space-y-4 border-t border-slate-700 pt-6">
+            
+            <div id="container-e2d939f7ebf37a8b70ec44178e001fe8" class="my-4">
+                <script async="async" data-cfasync="false" src="https://pl28816183.effectivegatecpm.com/e2d939f7ebf37a8b70ec44178e001fe8/invoke.js"></script>
+            </div>
+
+            <img id="thumb" class="rounded-xl w-full mb-2 shadow-lg border border-slate-600" src="">
+            <h3 id="videoTitle" class="font-bold text-xs line-clamp-1 mb-4 opacity-70"></h3>
             
             <form action="/download" method="POST" id="dlForm">
-                <input type="hidden" name="url" id="hiddenUrl">
-                <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2 block">Quality Selection</label>
-                <select name="resolution" id="resDrop" class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl text-sm mb-4 outline-none">
+                <input type="hidden" name="url" id="formUrl">
+                <select name="resolution" id="resSelect" class="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl">
                     </select>
-
-                <button type="button" id="rewardBtn" onclick="handleAdReward()" class="w-full py-4 bg-green-600 rounded-xl font-bold hover:bg-green-500 transition flex items-center justify-center">
-                    <i class="fa-solid fa-unlock-keyhole mr-2"></i> UNLOCK & DOWNLOAD
+                <button type="button" onclick="handleDownload()" id="dlBtn" class="w-full mt-4 py-4 bg-green-600 rounded-xl font-bold hover:bg-green-500 transition">
+                    START 4K DOWNLOAD
                 </button>
             </form>
         </div>
-    </div>
 
-    <div class="w-full max-w-2xl bg-slate-800/50 p-2 mt-6 border border-slate-700 rounded text-center text-xs text-slate-500">
-        ADVERTISEMENT
-        <div class="h-20 flex items-center justify-center bg-slate-700 rounded mt-1 italic">
-            Banner Ad (728x90)
+        <div id="loader" class="hidden mt-4 text-center">
+            <div class="inline-block w-6 h-6 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
     </div>
 
     <script>
-        // REPLACE THIS WITH YOUR REAL SMARTLINK FROM ADSTERRA/PROPELLER
-        const AD_LINK = "https://your-ad-link-here.com";
-
-        async function processLink() {
+        async function fetchInfo() {
             const url = document.getElementById('videoUrl').value;
-            if(!url) return alert("Paste a valid link!");
+            if (!url) return alert("Please paste a link!");
 
-            // UI State
-            document.getElementById('mainBtn').disabled = true;
-            document.getElementById('spinner').classList.remove('hidden');
-            document.getElementById('btnText').innerText = "FETCHING...";
+            document.getElementById('fetchBtn').disabled = true;
+            document.getElementById('loader').classList.remove('hidden');
 
-            try {
-                const res = await fetch('/get_info', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({url: url})
-                });
-                const data = await res.json();
+            const response = await fetch('/get_info', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({url: url})
+            });
 
-                if(data.error) throw new Error(data.error);
+            const data = await response.json();
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('fetchBtn').disabled = false;
 
-                // Populate UI
-                document.getElementById('resultSection').classList.remove('hidden', 'animate-pulse');
-                document.getElementById('thumb').src = data.thumbnail;
-                document.getElementById('title').innerText = data.title;
-                document.getElementById('hiddenUrl').value = data.url;
+            if (data.error) return alert("Error: " + data.error);
 
-                const drop = document.getElementById('resDrop');
-                drop.innerHTML = '';
-                data.resolutions.forEach(r => {
-                    const label = r >= 2160 ? "💎 4K Ultra HD" : r >= 1080 ? "✨ 1080p HD" : r + "p";
-                    drop.innerHTML += `<option value="${r}">${label}</option>`;
-                });
+            document.getElementById('step2').classList.remove('hidden');
+            document.getElementById('thumb').src = data.thumbnail;
+            document.getElementById('videoTitle').innerText = data.title;
+            document.getElementById('formUrl').value = url;
 
-            } catch(e) {
-                alert("Error: " + e.message);
-            } finally {
-                document.getElementById('mainBtn').disabled = false;
-                document.getElementById('spinner').classList.add('hidden');
-                document.getElementById('btnText').innerText = "ANALYZE VIDEO";
-            }
+            const select = document.getElementById('resSelect');
+            select.innerHTML = '';
+            data.resolutions.forEach(res => {
+                const label = res >= 2160 ? '💎 4K Ultra HD' : res >= 1080 ? '✨ 1080p Full HD' : res + 'p';
+                select.innerHTML += `<option value="${res}">${label}</option>`;
+            });
         }
 
-        function handleAdReward() {
-            const res = document.getElementById('resDrop').value;
-            
-            // If they want 4K or 1080p, force an ad click
-            if(res >= 1080) {
-                alert("High-Quality Unlock: Please interact with the next window to start your 4K download!");
-                window.open(AD_LINK, '_blank');
+        function handleDownload() {
+            const res = document.getElementById('resSelect').value;
+            // The Social Bar script is already active, so just trigger the form
+            if (res >= 1080) {
+                alert("Premium Quality: Please support our sponsor to start your 4K download!");
             }
-            
-            // Start the actual download in the background
-            document.getElementById('rewardBtn').innerText = "PREPARING FILE...";
-            document.getElementById('rewardBtn').disabled = true;
+            document.getElementById('dlBtn').innerText = "DOWNLOADING...";
+            document.getElementById('dlBtn').disabled = true;
             document.getElementById('dlForm').submit();
         }
     </script>
