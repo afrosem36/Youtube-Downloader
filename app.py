@@ -127,7 +127,16 @@ def _cache_set(url: str, data: dict):
 
 
 def _build_ydl_opts(extra: dict) -> dict:
-    base = {"quiet": True, "no_warnings": True, "socket_timeout": 15}
+    base = {
+        "quiet":        True,
+        "no_warnings":  True,
+        "socket_timeout": 15,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "web"],
+            }
+        },
+    }
     if os.path.exists(COOKIES_PATH):
         base["cookiefile"] = COOKIES_PATH
     base.update(extra)
