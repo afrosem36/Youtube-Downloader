@@ -148,8 +148,8 @@ def get_video_info(url: str) -> dict:
         return cached
     try:
         with yt_dlp.YoutubeDL(_build_ydl_opts({
-            "format": "bestvideo+bestaudio/best",
-            "extractor_args": {"youtube": {"skip": ["hls", "dash"]}},
+            "skip_download": True,
+            "ignoreerrors":  False,
         })) as ydl:
             info = ydl.extract_info(url, download=False)
     except yt_dlp.utils.DownloadError as e:
