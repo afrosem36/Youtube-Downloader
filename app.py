@@ -147,7 +147,7 @@ def get_video_info(url: str) -> dict:
     if cached:
         return cached
     try:
-        with yt_dlp.YoutubeDL(_build_ydl_opts({})) as ydl:
+        with yt_dlp.YoutubeDL(_build_ydl_opts({     "format": "bestvideo+bestaudio/best",     "extractor_args": {"youtube": {"skip": ["hls", "dash"]}}, })) as ydl: ```  Also update your `requirements.txt` to make sure yt-dlp is latest: ``` yt-dlp>=2026.2.21 ```  Then push to GitHub: ``` git add app.py requirements.txt git commit -m "Fix format availability error" git push
             info = ydl.extract_info(url, download=False)
     except yt_dlp.utils.DownloadError as e:
         logger.error(f"yt-dlp error for {url}: {e}")
@@ -292,3 +292,4 @@ def download():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
