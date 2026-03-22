@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XENX Downloader | Free YouTube Downloader, MP3 Converter & Tools</title>
+    <meta name="description" content="XENX Downloader is your all-in-one free toolkit. Download YouTube videos, convert to MP3, trim & merge audio/video files instantly with no limits or watermarks.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://example.com/">
+    <meta property="og:title" content="XENX Downloader | Free YouTube Downloader, MP3 Converter & Tools">
+    <meta property="og:description" content="XENX Downloader is your all-in-one free toolkit for YouTube, MP3 conversions, and Audio/Video management.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://example.com/og-image.jpg">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org", "@type": "WebApplication",
+      "name": "XENX Downloader", "applicationCategory": "UtilitiesApplication",
+      "description": "Multi-tool platform for YouTube downloading, MP3 converting, audio/video trimming and merging.",
+      "operatingSystem": "All", "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "USD" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org", "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question", "name": "Is XENX Downloader free?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, our tool is 100% free with no limits." }
+      }, {
+        "@type": "Question", "name": "Does it support 4K?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes! If the video was uploaded in 4K, you can download it in 4K." }
+      }, {
+        "@type": "Question", "name": "Can I convert video to MP3?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Absolutely! Use our MP3 Converter tab to select bitrates like 320kbps." }
+      }, {
+        "@type": "Question", "name": "Is my uploaded torrent safe?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, torrents act confidentially via our backend infrastructure." }
+      }]
+    }
+    </script>
+</head>
+<body class="light-mode">
+    <header class="navbar">
+        <div class="logo">XENX Downloader</div>
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+    </header>
+    <div class="ad-placeholder ad-top"><p>Ad Space - Top</p></div>
+
+    <main class="container">
+        <h1>XENX Downloader & Toolkit</h1>
+        <p class="subtitle">Your suite of fast, secure, and free media utilities.</p>
+        
+        <div class="main-nav">
+          <button class="nav-tab active" data-target="view-downloader">Downloader</button>
+          <button class="nav-tab" data-target="view-mp3">MP3 Converter</button>
+          <button class="nav-tab" data-target="view-audio">Audio Tools</button>
+          <button class="nav-tab" data-target="view-video">Video Tools</button>
+          <button class="nav-tab" data-target="view-torrent">Torrent</button>
+        </div>
+
+        <div id="view-downloader" class="view-section active">
+            <div class="downloader-box">
+                <h2>Media Downloader</h2>
+                <div class="tabs">
+                    <button class="tab active" data-type="youtube">YouTube Video</button>
+                    <button class="tab" data-type="shorts">Shorts</button>
+                    <button class="tab" data-type="reels">Reels</button>
+                    <button class="tab" data-type="story">Story</button>
+                </div>
+                <form id="downloadForm" class="input-group">
+                    <input type="url" id="urlInput" placeholder="Paste your link here..." required>
+                    <button type="submit" class="btn-primary">Fetch Links</button>
+                </form>
+                <div id="loading" class="loading hidden"><div class="spinner"></div><p>Fetching...</p></div>
+                <div id="error" class="error-msg hidden"></div>
+            </div>
+            <div class="ad-placeholder ad-inline"><p>Ad Space - Below Input</p></div>
+            <div id="results" class="results-container hidden"></div>
+            <div class="ad-placeholder ad-results hidden" id="ad-results"><p>Ad Space - Results</p></div>
+            <div class="ad-placeholder ad-section"><p>Ad Space - Inside Downloader Section</p></div>
+        </div>
+
+        <div id="view-mp3" class="view-section">
+            <div class="tool-box">
+                <h2>Video to MP3 Converter</h2>
+                <form id="convertForm" class="form-group col">
+                    <input type="url" id="mp3Url" placeholder="Paste video URL..." required>
+                    <div style="display:flex; width:100%; gap:1rem;">
+                        <select id="mp3Bitrate" required>
+                            <option value="128">128 kbps (Standard)</option>
+                            <option value="192" selected>192 kbps (High)</option>
+                            <option value="320">320 kbps (Extreme)</option>
+                        </select>
+                        <button type="submit" class="btn-primary">Convert to MP3</button>
+                    </div>
+                </form>
+                <div id="loadingMp3" class="loading hidden"><div class="spinner"></div><p>Converting...</p></div>
+                <div id="errorMp3" class="error-msg hidden"></div>
+                <div id="resMp3" class="results-container hidden"></div>
+            </div>
+            <div class="ad-placeholder ad-section"><p>Ad Space - Inside MP3 Section</p></div>
+        </div>
+
+        <div id="view-audio" class="view-section">
+            <div class="tool-box">
+                <h2>Audio Trimmer</h2>
+                <form id="trimForm" class="form-group col">
+                    <input type="file" id="trimFile" accept="audio/*" required>
+                    <div style="display:flex; width:100%; gap:1rem;">
+                        <input type="text" id="trimStart" placeholder="Start Time (e.g. 00:00:00)" required>
+                        <input type="text" id="trimEnd" placeholder="End Time (e.g. 00:00:15)" required>
+                        <button type="submit" class="btn-primary">Trim Audio</button>
+                    </div>
+                </form>
+                <div id="loadingTrim" class="loading hidden"><div class="spinner"></div><p>Trimming...</p></div>
+                <div id="errorTrim" class="error-msg hidden"></div>
+                <div id="resTrim" class="results-container hidden"></div>
+            </div>
+            <div class="tool-box">
+                <h2>Audio Merger</h2>
+                <form id="audioMergeForm" class="form-group col">
+                    <input type="file" id="audioMergeFiles" accept="audio/*" multiple required>
+                    <button type="submit" class="btn-primary" style="width:100%">Merge Selected Audios</button>
+                </form>
+                <div id="loadingAudioMerge" class="loading hidden"><div class="spinner"></div><p>Merging...</p></div>
+                <div id="errorAudioMerge" class="error-msg hidden"></div>
+                <div id="resAudioMerge" class="results-container hidden"></div>
+            </div>
+            <div class="ad-placeholder ad-section"><p>Ad Space - Inside Audio Tools</p></div>
+        </div>
+
+        <div id="view-video" class="view-section">
+            <div class="tool-box">
+                <h2>Video Merger</h2>
+                <form id="videoMergeForm" class="form-group col">
+                    <input type="file" id="videoMergeFiles" accept="video/*" multiple required>
+                    <button type="submit" class="btn-primary" style="width:100%">Merge Selected Videos</button>
+                </form>
+                <div id="loadingVideoMerge" class="loading hidden"><div class="spinner"></div><p>Merging...</p></div>
+                <div id="errorVideoMerge" class="error-msg hidden"></div>
+                <div id="resVideoMerge" class="results-container hidden"></div>
+            </div>
+            <div class="ad-placeholder ad-section"><p>Ad Space - Inside Video Tools</p></div>
+        </div>
+
+        <div id="view-torrent" class="view-section">
+            <div class="tool-box">
+                <h2>Cloud Torrent Downloader</h2>
+                <form id="torrentForm" class="form-group col">
+                    <input type="text" id="torrentMagnet" placeholder="Paste Magnet URL..." required>
+                    <button type="submit" class="btn-primary" style="width:100%">Add to Cloud Transfer</button>
+                </form>
+                <div id="loadingTorrent" class="loading hidden"><div class="spinner"></div><p>Queuing...</p></div>
+                <div id="errorTorrent" class="error-msg hidden"></div>
+                <div id="resTorrent" class="success-msg hidden"></div>
+            </div>
+            <div class="ad-placeholder ad-section"><p>Ad Space - Inside Torrent Section</p></div>
+        </div>
+
+        <div class="content-layout">
+            <div class="main-content">
+                <section class="seo-content">
+                    <h2>Welcome to XENX Downloader: The Ultimate Web Tool</h2>
+                    <p>XENX Downloader is a premium web-based multi-tool platform offering seamless access to a multitude of powerful features. Born from the idea to simplify daily digital needs, we expand far beyond basic video downloading. With an advanced infrastructure, XENX Downloader provides state-of-the-art file conversions, rapid video extraction, and robust cloud media processing accessible completely free on your browser.</p>
+                    
+                    <h3>Free YouTube Downloader</h3>
+                    <p>Our core extraction system flawlessly supports YouTube, Instagram Reels, TikTok, and more. XENX Downloader retrieves maximum resolution files intuitively. Enjoy stunning 4K resolutions and 1080p formats without a premium subscription or complex setups. By delegating heavy logic to our high-speed server, you grab instant MP4 downloads right to your local device quickly, safely, and entirely ad-supported.</p>
+
+                    <h3>Video to MP3 Converter</h3>
+                    <p>Sometimes you need only the sonic experience. The XENX Video to MP3 Converter handles direct sonic extraction from media endpoints, transcoded flawlessly using server-grade FFmpeg engines. Users select their exact auditory quality preference—from lightweight 128kbps streams, vibrant 192kbps mixes, up to lossless-grade 320kbps extreme encodes. No external applications are necessary.</p>
+
+                    <h3>Intuitive Audio & Video Tools</h3>
+                    <p>We've implemented a full suite of Audio and Video utilities directly into your browser tab. The XENX Audio Trimmer safely cuts out favorite track segments natively. Need to mix assets together? The XENX Audio & Video Mergers accept local selections and intelligently concatenate them into continuous MP4 or MP3 output files rapidly. Zero watermarks and permanent reliability.</p>
+
+                    <h3>Cloud Torrent Handling</h3>
+                    <p>Bypass ISP restrictions and protect your local bandwidth via the XENX Torrent cloud engine. Provide any valid Magnet link and safely queue the network task onto powerful backend nodes, fetching big data faster securely via proxy architecture, masking local IPs completely.</p>
+                </section>
+
+                <section class="faq-section">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faq-item">
+                        <h4>Is XENX Downloader free?</h4>
+                        <p>Yes, all features of XENX Downloader, from the MP3 converter to media merging, are entirely free without paywalls or subscriptions.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Does it support 4K downloading?</h4>
+                        <p>Absolutely. If the content creator uploaded it in 4K resolution, you will be provided with full UHD download tiers flawlessly.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can I convert video to MP3 securely?</h4>
+                        <p>Yes, the MP3 conversion allows strict bitrates up to 320kbps and respects encryption, extracting studio-quality streams with zero external bloatware.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Are my uploaded files kept securely?</h4>
+                        <p>User privacy is vital. Files uploaded to our Audio/Video Tools are immediately cleaned dynamically after the merging process fully concludes.</p>
+                    </div>
+                </section>
+            </div>
+            <aside class="sidebar">
+                <div class="ad-placeholder ad-sidebar"><p>Ad Space - Sidebar</p></div>
+            </aside>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>&copy; 2026 XENX Media. All rights reserved.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

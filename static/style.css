@@ -1,0 +1,94 @@
+:root {
+    --bg-color: #f8fafc;
+    --text-color: #0f172a;
+    --card-bg: #ffffff;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --border-color: #e2e8f0;
+    --ad-bg: #e5e7eb;
+    --ad-text: #6b7280;
+    --error-color: #ef4444;
+}
+
+body.dark-mode {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --card-bg: #1e293b;
+    --primary: #6366f1;
+    --primary-hover: #818cf8;
+    --border-color: #334155;
+    --ad-bg: #334155;
+    --ad-text: #94a3b8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: all 0.3s ease; line-height: 1.6; }
+
+.navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); }
+.logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+.theme-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600; }
+.theme-btn:hover { background-color: var(--border-color); }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+h1 { text-align: center; font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary); }
+.subtitle { text-align: center; color: var(--ad-text); margin-bottom: 2rem; }
+
+/* Main Tabs */
+.main-nav { display: flex; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem; }
+.nav-tab { flex: 1; text-align: center; padding: 1rem; background: var(--card-bg); border: 2px solid var(--border-color); color: var(--text-color); border-radius: 0.5rem; font-weight: bold; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+.nav-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+.view-section { display: none; }
+.view-section.active { display: block; animation: fadeIn 0.3s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.downloader-box, .tool-box { background: var(--card-bg); padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; border: 1px solid var(--border-color); }
+.tool-box h2 { margin-bottom: 1.5rem; font-size: 1.5rem; }
+
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; }
+.tab { flex: 1; padding: 0.75rem 1rem; background: transparent; border: 1px solid var(--border-color); color: var(--text-color); border-radius: 0.5rem; cursor: pointer; font-weight: 600; white-space: nowrap; }
+.tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+.input-group, .form-group { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
+.form-group.col { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+
+input[type="url"], input[type="text"], input[type="file"], select { flex: 1; padding: 1rem; font-size: 1rem; border: 2px solid var(--border-color); border-radius: 0.5rem; background: var(--bg-color); color: var(--text-color); width: 100%; }
+input:focus, select:focus { outline: none; border-color: var(--primary); }
+
+.btn-primary { background: var(--primary); color: white; border: none; padding: 1rem 2rem; font-size: 1rem; font-weight: 600; border-radius: 0.5rem; cursor: pointer; transition: 0.2s; min-width: 150px; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-download { display: inline-block; background: var(--primary); color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: 600; text-align: center; }
+.btn-download:hover { background: var(--primary-hover); }
+
+.hidden { display: none !important; }
+.loading { text-align: center; margin: 1.5rem 0; color: var(--primary); }
+.spinner { border: 4px solid var(--border-color); border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.error-msg { margin-top: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); color: var(--error-color); border: 1px solid var(--error-color); border-radius: 0.5rem; text-align: center; font-weight: 600; }
+.success-msg { margin-top: 1rem; padding: 1rem; background: rgba(34,197,94,0.1); color: #16a34a; border: 1px solid #16a34a; border-radius: 0.5rem; text-align: center; font-weight: 600; }
+
+.results-container { background: var(--card-bg); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border-color); margin-bottom: 2rem; text-align: center; }
+.video-title { margin-bottom: 1.5rem; font-size: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+
+.format-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.format-card { border: 1px solid var(--border-color); padding: 1rem; border-radius: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: var(--bg-color); }
+.format-quality { font-weight: bold; font-size: 1.1rem; }
+.format-type { font-size: 0.875rem; color: var(--ad-text); text-transform: uppercase; }
+
+.content-layout { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; margin-top: 3rem; }
+.seo-content h2, .faq-section h2 { color: var(--primary); margin-bottom: 1rem; }
+.seo-content h3 { margin: 1.5rem 0 0.5rem; }
+.seo-content p, .seo-content ul { margin-bottom: 1rem; }
+.seo-content ul { padding-left: 1.5rem; }
+.faq-item { margin-bottom: 1.5rem; background: var(--card-bg); padding: 1.5rem; border-radius: 0.5rem; border: 1px solid var(--border-color); }
+.faq-item h4 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+.footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border-color); margin-top: 4rem; color: var(--ad-text); }
+
+.ad-placeholder { background: var(--ad-bg); color: var(--ad-text); display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px dashed var(--ad-text); margin-bottom: 2rem; border-radius: 0.5rem; }
+.ad-top { height: 90px; max-width: 728px; margin: 2rem auto; }
+.ad-inline, .ad-results, .ad-section { height: 90px; }
+.ad-sidebar { height: 600px; position: sticky; top: 2rem; }
+
+@media (max-width: 768px) { .content-layout { grid-template-columns: 1fr; } .input-group { flex-direction: column; } .ad-sidebar { height: 250px; position: static; } }
