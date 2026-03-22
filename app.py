@@ -20,6 +20,36 @@ def cleanup_file(filepath):
         except Exception:
             pass
 
+def get_base_ydl_opts():
+    opts = {
+        'quiet': True,
+        'noplaylist': True,
+        'nocheckcertificate': True,
+        'ignoreerrors': True,
+        'socket_timeout': 15,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': 'https://www.google.com/'
+        }
+    }
+    if os.path.exists('cookies.txt'):
+        opts['cookiefile'] = 'cookies.txt'
+    return opts
+
+def extract_with_retry(ydl_opts, url, download=False, retries=3, delay=2):
+    last_err = None
+    for attempt in range(retries):
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=download)
+                if info:
+                    return info
+        except Exception as e:
+            last_err = e
+        time.sleep(delay)
+    raise Exception(last_err or "Unable to extract info")
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -41,30 +71,29 @@ def api_download():
     data = request.json
     if not data or 'url' not in data: return jsonify({"error": "Invalid URL"}), 400
     url = data['url']
-    ydl_opts = {'quiet': True, 'skip_download': True}
+    ydl_opts = get_base_ydl_opts()
+    ydl_opts['skip_download'] = True
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=False)
-            title = info.get('title', 'Unknown Title')
-            formats = info.get('formats', [])
-            parsed_formats = []
-            for f in formats:
-                format_type = "video" if f.get('vcodec') != 'none' else "audio"
-                quality = f.get('format_note') or f.get('resolution') 
-                if not quality and format_type == 'audio':
-                    quality = f"{f.get('abr', 'Unknown')}kbps" if f.get('abr') else "Audio"
-                elif not quality:
-                    quality = f.get('format_id', 'Unknown')
-                download_url = f.get('url')
-                if download_url:
-                    parsed_formats.append({
-                        "quality": str(quality), "type": format_type, "url": download_url,
-                        "ext": f.get('ext', ''), "has_audio": f.get('acodec') != 'none', "format_id": f.get('format_id')
-                    })
-            return jsonify({"title": title, "formats": parsed_formats})
-    except Exception as e:
-        import traceback; traceback.print_exc()
-        return jsonify({"error": f"Extraction failure: {str(e)}"}), 500
+        info = extract_with_retry(ydl_opts, url, download=False)
+        title = info.get('title', 'Unknown Title')
+        formats = info.get('formats', [])
+        parsed_formats = []
+        for f in formats:
+            format_type = "video" if f.get('vcodec') != 'none' else "audio"
+            quality = f.get('format_note') or f.get('resolution') 
+            if not quality and format_type == 'audio':
+                quality = f"{f.get('abr', 'Unknown')}kbps" if f.get('abr') else "Audio"
+            elif not quality:
+                quality = f.get('format_id', 'Unknown')
+            download_url = f.get('url')
+            if download_url:
+                parsed_formats.append({
+                    "quality": str(quality), "type": format_type, "url": download_url,
+                    "ext": f.get('ext', ''), "has_audio": f.get('acodec') != 'none', "format_id": f.get('format_id')
+                })
+        return jsonify({"title": title, "formats": parsed_formats})
+    except Exception:
+        return jsonify({"error": "Unable to fetch video. Try again later or use another link."}), 500
 
 @app.route('/api/download_file', methods=['GET'])
 def download_merged_file():
@@ -72,19 +101,21 @@ def download_merged_file():
     format_id = request.args.get('format_id')
     if not url or not format_id: return "Error", 400
     file_id = str(uuid.uuid4())
-    ydl_opts = {
-        'format': f"{format_id}+bestaudio/best", 'merge_output_format': 'mp4',
-        'outtmpl': f'downloads/{file_id}.%(ext)s', 'quiet': True, 'noplaylist': True,
-    }
+    ydl_opts = get_base_ydl_opts()
+    ydl_opts['format'] = f"{format_id}+bestaudio/best"
+    ydl_opts['merge_output_format'] = 'mp4'
+    ydl_opts['outtmpl'] = f'downloads/{file_id}.%(ext)s'
+    
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl: info = ydl.extract_info(url, download=True)
+        info = extract_with_retry(ydl_opts, url, download=True)
         files = glob.glob(f"downloads/{file_id}.*")
         if not files: return "Failed merge", 500
         final_file = files[0]
         threading.Thread(target=cleanup_file, args=(final_file,)).start()
         safe_title = "".join(x for x in info.get('title', 'video') if x.isalnum() or x in " -_")
         return send_file(final_file, as_attachment=True, download_name=f"{safe_title}_{format_id}.mp4")
-    except Exception as e: return f"Failure: {str(e)}", 500
+    except Exception:
+        return jsonify({"error": "Unable to fetch video. Try again later or use another link."}), 500
 
 @app.route('/api/convert-mp3', methods=['POST'])
 def convert_mp3():
@@ -93,16 +124,17 @@ def convert_mp3():
     bitrate = data.get('bitrate', '192')
     if not url: return jsonify({"error": "URL required"}), 400
     file_id = str(uuid.uuid4())
-    ydl_opts = {
-        'format': 'bestaudio/best', 'outtmpl': f'downloads/{file_id}.%(ext)s',
-        'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': bitrate}],
-        'quiet': True, 'noplaylist': True,
-    }
+    ydl_opts = get_base_ydl_opts()
+    ydl_opts['format'] = 'bestaudio/best'
+    ydl_opts['outtmpl'] = f'downloads/{file_id}.%(ext)s'
+    ydl_opts['postprocessors'] = [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': bitrate}]
+    
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl: info = ydl.extract_info(url, download=True)
+        info = extract_with_retry(ydl_opts, url, download=True)
         safe_title = "".join(x for x in info.get('title', 'audio') if x.isalnum() or x in " -_")
         return jsonify({"success": True, "title": info.get('title'), "download_url": f"/api/get?file={file_id}.mp3&name={safe_title}_{bitrate}kbps.mp3"})
-    except Exception as e: return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Unable to fetch video. Try again later or use another link."}), 500
 
 @app.route('/api/trim-audio', methods=['POST'])
 def trim_audio():
