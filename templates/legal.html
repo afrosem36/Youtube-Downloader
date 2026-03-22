@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="canonical" href="https://example.com{{ request.path }}">
+</head>
+<body class="light-mode">
+    <header class="navbar">
+        <div class="logo">XENX Tools</div>
+        <div style="display:flex; gap:15px; align-items:center;">
+            <a href="/" style="color:var(--text-color); text-decoration:none; font-weight:600;">Home Tools</a>
+            <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        </div>
+    </header>
+    <main class="container">
+        <h1>{{ heading }}</h1>
+        <div class="tool-box" style="margin-top:2rem;">
+            <p>This is a standard {{ heading }} page for XENX Tools. We respect user privacy, conform to standard legal terms, and offer free web-based utilities. For advertising or support inquiries, please contact our administrative team.</p>
+            <br>
+            <p>By using the XENX Tools application, you represent and warrant that you agree to all terms outlined.</p>
+            <br>
+            <a href="/" class="btn-download">Return to Home</a>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>&copy; 2026 XENX Media Tools. All rights reserved.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

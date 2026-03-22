@@ -5,15 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
     });
 
-    const navTabs = document.querySelectorAll('.nav-tab');
-    navTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(tab.getAttribute('data-target')).classList.add('active');
-        });
-    });
+    // Note: Tab navigation is now done via server-side routing (<a> tags)
 
     // Downloader Logic
     const df = document.getElementById('downloadForm');

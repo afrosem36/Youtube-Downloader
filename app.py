@@ -14,27 +14,20 @@ def cleanup_file(filepath):
     for _ in range(10):
         try:
             time.sleep(10)
-            if os.path.exists(filepath):
-                os.remove(filepath)
+            if os.path.exists(filepath): os.remove(filepath)
             break
-        except Exception:
-            pass
+        except Exception: pass
 
 def get_base_ydl_opts():
     opts = {
-        'quiet': True,
-        'noplaylist': True,
-        'nocheckcertificate': True,
-        'ignoreerrors': True,
-        'socket_timeout': 15,
+        'quiet': True, 'noplaylist': True, 'nocheckcertificate': True, 'ignoreerrors': True, 'socket_timeout': 15,
         'http_headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept-Language': 'en-US,en;q=0.9',
             'Referer': 'https://www.google.com/'
         }
     }
-    if os.path.exists('cookies.txt'):
-        opts['cookiefile'] = 'cookies.txt'
+    if os.path.exists('cookies.txt'): opts['cookiefile'] = 'cookies.txt'
     return opts
 
 def extract_with_retry(ydl_opts, url, download=False, retries=3, delay=2):
@@ -43,16 +36,72 @@ def extract_with_retry(ydl_opts, url, download=False, retries=3, delay=2):
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=download)
-                if info:
-                    return info
-        except Exception as e:
-            last_err = e
+                if info: return info
+        except Exception as e: last_err = e
         time.sleep(delay)
     raise Exception(last_err or "Unable to extract info")
 
+# --- SEO PAGES ---
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', 
+        active_tab='downloader', 
+        title='XENX Tools – All-in-One Media Toolkit', 
+        desc='Download videos, convert MP3s, and merge audio/video securely online for free with XENX Tools.'
+    )
+
+@app.route('/mp3-converter')
+def mp3_converter():
+    return render_template('index.html', 
+        active_tab='mp3', 
+        title='Free Video to MP3 Converter - XENX Tools', 
+        desc='Instantly convert any video URL to high-quality 320kbps MP3 audio seamlessly.'
+    )
+
+@app.route('/audio-trimmer')
+def audio_trimmer():
+    return render_template('index.html', 
+        active_tab='audio', 
+        title='Free Audio Trimmer & Merger App - XENX Tools', 
+        desc='Trim dead space or merge multiple audio tracks together directly from your browser.'
+    )
+
+@app.route('/video-merger')
+def video_merger():
+    return render_template('index.html', 
+        active_tab='video', 
+        title='Free Video Merger Tool - XENX Tools', 
+        desc='Combine multiple clips into a single MP4 video file instantly with zero watermarks.'
+    )
+
+@app.route('/torrent')
+def torrent_page():
+    return render_template('index.html', 
+        active_tab='torrent', 
+        title='Secure Cloud Torrent Client - XENX Tools', 
+        desc='Safely process magnet links down to your browser using our encrypted proxy network.'
+    )
+
+# --- LEGAL PAGES ---
+
+@app.route('/privacy-policy')
+def privacy():
+    return render_template('legal.html', title='Privacy Policy - XENX Tools', heading='Privacy Policy')
+
+@app.route('/terms')
+def terms():
+    return render_template('legal.html', title='Terms of Service - XENX Tools', heading='Terms of Service')
+
+@app.route('/contact')
+def contact():
+    return render_template('legal.html', title='Contact Us - XENX Tools', heading='Contact Us')
+
+@app.route('/about')
+def about():
+    return render_template('legal.html', title='About Us - XENX Tools', heading='About XENX Tools')
+
+# --- API ENDPOINTS ---
 
 @app.route('/api/get')
 def get_file():
@@ -93,7 +142,7 @@ def api_download():
                 })
         return jsonify({"title": title, "formats": parsed_formats})
     except Exception:
-        return jsonify({"error": "Unable to fetch video. Try again later or use another link."}), 500
+        return jsonify({"error": "This video cannot be processed right now. Try another link."}), 500
 
 @app.route('/api/download_file', methods=['GET'])
 def download_merged_file():
@@ -115,7 +164,7 @@ def download_merged_file():
         safe_title = "".join(x for x in info.get('title', 'video') if x.isalnum() or x in " -_")
         return send_file(final_file, as_attachment=True, download_name=f"{safe_title}_{format_id}.mp4")
     except Exception:
-        return jsonify({"error": "Unable to fetch video. Try again later or use another link."}), 500
+        return jsonify({"error": "This video cannot be processed right now. Try another link."}), 500
 
 @app.route('/api/convert-mp3', methods=['POST'])
 def convert_mp3():
@@ -134,7 +183,7 @@ def convert_mp3():
         safe_title = "".join(x for x in info.get('title', 'audio') if x.isalnum() or x in " -_")
         return jsonify({"success": True, "title": info.get('title'), "download_url": f"/api/get?file={file_id}.mp3&name={safe_title}_{bitrate}kbps.mp3"})
     except Exception:
-        return jsonify({"error": "Unable to fetch video. Try again later or use another link."}), 500
+        return jsonify({"error": "This video cannot be processed right now. Try another link."}), 500
 
 @app.route('/api/trim-audio', methods=['POST'])
 def trim_audio():
