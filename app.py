@@ -165,5 +165,5 @@ def torrent():
     if not request.json.get('magnet'): return jsonify({"error": "Provide magnet link"}), 400
     return jsonify({"success": True, "message": "Torrent safely queued on the server backend."})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
